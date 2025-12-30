@@ -1,5 +1,5 @@
-from core.store import TASKS
-from domain.download.enums import TaskStatus
+from app.core.store import TASKS
+from app.domain.download.enums import TaskStatus
 
 
 class TaskRepository:

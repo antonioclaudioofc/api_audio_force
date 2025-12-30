@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from domain.download.enums import TaskStatus
+from app.domain.download.enums import TaskStatus
 
 
 @dataclass

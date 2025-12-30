@@ -1,7 +1,7 @@
 from fastapi import APIRouter
 from fastapi.responses import StreamingResponse
-from domain.download.schemas import DownloadPayload
-from services.download.download_service import DownloadService
+from app.domain.download.schemas import DownloadPayload
+from app.services.download.download_service import DownloadService
 from pathlib import Path
 import shutil
 

@@ -1,7 +1,7 @@
-from repository.task_repository import TaskRepository
-from domain.download.enums import TaskStatus
-from services.download.downloader import YoutubeDownloader
-from services.download.converter import AudioConverter
+from app.repository.task_repository import TaskRepository
+from app.domain.download.enums import TaskStatus
+from app.services.download.downloader import YoutubeDownloader
+from app.services.download.converter import AudioConverter
 
 
 class DownloadWorker:

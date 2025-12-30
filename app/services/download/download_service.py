@@ -1,8 +1,8 @@
 import uuid
 from pathlib import Path
-from services.zip_service import ZipService
-from services.download.downloader import YoutubeDownloader
-from services.download.converter import AudioConverter
+from app.services.zip_service import ZipService
+from app.services.download.downloader import YoutubeDownloader
+from app.services.download.converter import AudioConverter
 
 
 class DownloadService:

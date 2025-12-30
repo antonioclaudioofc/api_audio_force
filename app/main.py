@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 
-from routers.router import router
+from app.routers.router import router
 
 app = FastAPI(
     title="API Audio Forge",
