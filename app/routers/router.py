@@ -1,44 +1,34 @@
-from fastapi import APIRouter, BackgroundTasks, HTTPException
+from fastapi import APIRouter
+from fastapi.responses import StreamingResponse
+from domain.download.schemas import DownloadPayload
+from services.download.download_service import DownloadService
 from pathlib import Path
-from core.store import TASKS
-from schemas.download import DownloadRequest
-from services.tasks import process_download, create_task
+import shutil
 
 router = APIRouter(
-    prefix="music",
+    prefix="/music",
+    tags=["Download"]
 )
 
+service = DownloadService()
 
-@router.post("/downloads")
-def create_download(data: DownloadRequest, bg: BackgroundTasks):
-    task_id = create_task()
-    bg.add_task(process_download, task_id, data.model_dump())
-    return {"task_id": task_id, "status": "processing"}
 
-@router.get("/downloads/{task_id}")
-def get_status(task_id: str):
-    if task_id not in TASKS:
-        raise HTTPException(404)
-    return TASKS[task_id]
+@router.post("/download")
+def download_zip(payload: DownloadPayload):
+    zip_path: Path = service.download_and_zip(payload.url)
 
-@router.get("/downloads/{task_id}/files")
-def list_files(task_id: str):
-    if task_id not in TASKS:
-        raise HTTPException(404)
+    def file_stream():
+        try:
+            with open(zip_path, "rb") as f:
+                while chunk := f.read(1024 * 1024):
+                    yield chunk
+        finally:
+            shutil.rmtree(zip_path.parent, ignore_errors=True)
 
-    files = []
-    base = Path("downloads")
-
-    for artist in base.iterdir():
-        if artist.is_dir():
-            files.extend([f.name for f in artist.glob("*.mp3")])
-
-    return {"files": files}
-
-@router.delete("/downloads/{task_id}")
-def delete_task(task_id: str):
-    if task_id not in TASKS:
-        raise HTTPException(404)
-
-    del TASKS[task_id]
-    return {"message": "Tarefa removida"}
+    return StreamingResponse(
+        file_stream(),
+        media_type="application/zip",
+        headers={
+            "Content-Disposition": "attachment; filename=music.zip"
+        }
+    )
